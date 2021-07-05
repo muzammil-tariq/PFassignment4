@@ -8,19 +8,17 @@ RUN apt-get update
 RUN apt update && apt install -y \
 	msmtp \
 	openssl \
-	ca-certificates \
-        nginx \
-        php7.4-fpm \
-        mysql-server
+	ca-certificates
 
 
 # Download Nginx and Sql ------------------------
 
-#RUN apt-get install nginx -y \
-#   &&  apt-get install php7.4-fpm -y \
-#   && apt-get install mysql-server -y
+RUN apt-get install nginx -y \
+   &&  apt-get install php7.4-fpm -y \
+   && apt-get install mysql-server -y
 
 # Host our Php file ------------------------
+
 COPY nginxConf/info.php  /var/www/html
 
 # Add Configuration -------------------------
@@ -34,6 +32,7 @@ EXPOSE 80 81 3306
 # DOWNLOAD CERTS -------------------------
 
 RUN update-ca-certificates
+
 RUN ln -sf /usr/bin/msmtp /usr/sbin/sendmail
 
 COPY mail/msmtprc /etc
@@ -41,5 +40,7 @@ COPY mail/msmtprc /etc
 # Entry Point ----------------------------
 
 COPY ./script.sh /
+
 RUN chmod +x /script.sh
+
 ENTRYPOINT ["/script.sh"]
