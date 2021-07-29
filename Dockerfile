@@ -4,12 +4,10 @@ FROM ubuntu:20.04 AS builder
 
 RUN apt-get update
 
-# Download msmtp ------------------------------
-RUN apt update && apt install -y \
-	msmtp \
-	openssl \
-	ca-certificates
+#Download PM2
+RUN apt install npm
 
+RUN npm install pm2 -g
 
 # Download Nginx and Sql ------------------------
 
@@ -29,13 +27,6 @@ ADD nginxConf/default /etc/nginx/sites-available/default
 
 EXPOSE 80 81 3306 
 
-# DOWNLOAD CERTS -------------------------
-
-RUN update-ca-certificates
-
-RUN ln -sf /usr/bin/msmtp /usr/sbin/sendmail
-
-COPY mail/msmtprc /etc
 
 # Entry Point ----------------------------
 
@@ -44,3 +35,4 @@ COPY ./script.sh /
 RUN chmod +x /script.sh
 
 ENTRYPOINT ["/script.sh"]
+
